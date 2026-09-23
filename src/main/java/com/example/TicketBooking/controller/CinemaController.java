@@ -2,6 +2,7 @@ package com.example.TicketBooking.controller;
 
 import com.example.TicketBooking.dto.CinemaDTO;
 import com.example.TicketBooking.service.CinemaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +23,13 @@ public class CinemaController {
     }
 
     @PostMapping("")
-    public ResponseEntity<CinemaDTO> createCinema(@RequestBody CinemaDTO cinemaDTO) {
+    public ResponseEntity<CinemaDTO> createCinema(@Valid @RequestBody CinemaDTO cinemaDTO) {
         CinemaDTO created = cinemaService.create(cinemaDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CinemaDTO> updateCinema(@PathVariable Long id, @RequestBody CinemaDTO cinemaDTO) {
+    public ResponseEntity<CinemaDTO> updateCinema(@PathVariable Long id, @Valid @RequestBody CinemaDTO cinemaDTO) {
         CinemaDTO updated = cinemaService.update(id, cinemaDTO);
         return ResponseEntity.ok(updated);
     }

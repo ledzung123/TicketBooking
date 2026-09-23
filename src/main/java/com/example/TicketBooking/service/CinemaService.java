@@ -2,6 +2,7 @@ package com.example.TicketBooking.service;
 
 import com.example.TicketBooking.dto.CinemaDTO;
 import com.example.TicketBooking.entity.Cinema;
+import com.example.TicketBooking.exception.ResourceNotFoundException;
 import com.example.TicketBooking.mapper.CinemaMapper;
 import com.example.TicketBooking.repository.CinemaRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,16 +34,16 @@ public class CinemaService {
     @Transactional
     public CinemaDTO update(Long id, CinemaDTO cinemaDTO) {
         Cinema cinema = cinemaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cinema not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cinema not found"));
         cinemaMapper.updateEntityFromDTO(cinemaDTO, cinema);
         Cinema saved = cinemaRepository.save(cinema);
-        return cinemaMapper.toDTO(cinema);
+        return cinemaMapper.toDTO(saved);
     }
 
     @Transactional
     public void delete(Long id) {
         Cinema cinema = cinemaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cinema not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cinema not found"));
         cinemaRepository.deleteById(id);
     }
 }

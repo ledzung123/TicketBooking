@@ -15,7 +15,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,9 +36,6 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
     @OneToMany(mappedBy = "user")
     private Set<Booking> bookings;
 
@@ -46,8 +43,6 @@ public class User {
 
     @PrePersist
     public void onCreate() {
-        this.createdAt = LocalDateTime.now();
-
         if (this.role == null) {
             this.role = Role.CUSTOMER;
         }

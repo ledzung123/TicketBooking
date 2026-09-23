@@ -4,6 +4,9 @@ import com.example.TicketBooking.dto.SeatCreateDTO;
 import com.example.TicketBooking.dto.SeatDTO;
 import com.example.TicketBooking.entity.Hall;
 import com.example.TicketBooking.entity.Seat;
+import com.example.TicketBooking.exception.DuplicateResourceException;
+import com.example.TicketBooking.exception.ResourceInUseException;
+import com.example.TicketBooking.exception.ResourceNotFoundException;
 import com.example.TicketBooking.mapper.SeatMapper;
 import com.example.TicketBooking.repository.BookingSeatRepository;
 import com.example.TicketBooking.repository.HallRepository;
@@ -37,11 +40,11 @@ public class SeatService {
     @Transactional
     public SeatDTO create(SeatCreateDTO seatCreateDTO) {
         if (seatRepository.existsByHall_IdAndSeatCode(seatCreateDTO.getHallId(), seatCreateDTO.getSeatCode())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Seat already exists");
+            throw new DuplicateResourceException("Hall and seat already exists");
         }
 
         Hall hall = hallRepository.findById(seatCreateDTO.getHallId()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Hall not found"));
+                () -> new ResourceNotFoundException("Hall not found"));
 
         Seat seat = seatMapper.toEntity(seatCreateDTO);
         seat.setHall(hall);
@@ -53,10 +56,10 @@ public class SeatService {
     @Transactional
     public SeatDTO update(Long id, SeatCreateDTO seatCreateDTO) {
         Hall hall = hallRepository.findById(seatCreateDTO.getHallId()).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Hall not found"));
+                () -> new ResourceNotFoundException("Hall not found"));
 
         Seat seat = seatRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Seat not fount"));
+                () -> new ResourceNotFoundException("Seat not found"));
 
         seatMapper.updateEntityFromDTO(seatCreateDTO, seat);
         seat.setHall(hall);
@@ -68,11 +71,11 @@ public class SeatService {
     @Transactional
     public void delete(Long id) {
         if (bookingSeatRepository.existsBySeat_Id(id)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Seat still exists in booking seats");
+            throw new ResourceInUseException("Seat still exists in booking seats");
         }
 
         Seat seat = seatRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Seat not found"));
+                () -> new ResourceNotFoundException("Seat not found"));
 
         seatRepository.deleteById(id);
     }
