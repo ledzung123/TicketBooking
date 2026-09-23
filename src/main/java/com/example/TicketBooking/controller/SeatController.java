@@ -3,6 +3,7 @@ package com.example.TicketBooking.controller;
 import com.example.TicketBooking.dto.SeatCreateDTO;
 import com.example.TicketBooking.dto.SeatDTO;
 import com.example.TicketBooking.service.SeatService;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,14 +25,14 @@ public class SeatController {
     }
 
     @PostMapping("")
-    public ResponseEntity<SeatDTO> createSeat(@RequestBody SeatCreateDTO seatCreateDTO) {
+    public ResponseEntity<SeatDTO> createSeat(@Valid @RequestBody SeatCreateDTO seatCreateDTO) {
         SeatDTO seatDTO = seatService.create(seatCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(seatDTO);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SeatDTO> updateSeat(@PathVariable Long id
-            , @RequestBody SeatCreateDTO seatCreateDTO) {
+            , @Valid @RequestBody SeatCreateDTO seatCreateDTO) {
         SeatDTO seatDTO = seatService.update(id, seatCreateDTO);
         return ResponseEntity.ok(seatDTO);
     }

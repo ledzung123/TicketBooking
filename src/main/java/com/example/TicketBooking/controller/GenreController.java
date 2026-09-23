@@ -3,6 +3,7 @@ package com.example.TicketBooking.controller;
 import com.example.TicketBooking.dto.GenreDTO;
 import com.example.TicketBooking.entity.Genre;
 import com.example.TicketBooking.service.GenreService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +25,14 @@ public class GenreController {
     }
 
     @PostMapping("")
-    public ResponseEntity<GenreDTO> createGenre(@RequestBody GenreDTO genreDTO) {
+    public ResponseEntity<GenreDTO> createGenre(@Valid @RequestBody GenreDTO genreDTO) {
         GenreDTO createdGenre = genreService.create(genreDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdGenre);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GenreDTO> updateGenre(@PathVariable("id") Long id, @RequestBody GenreDTO genreDTO) {
+    public ResponseEntity<GenreDTO> updateGenre(@PathVariable("id") Long id, @Valid @RequestBody GenreDTO genreDTO) {
         GenreDTO updatedGenre = genreService.update(id, genreDTO);
 
         return ResponseEntity.ok(updatedGenre);

@@ -17,13 +17,10 @@ import java.util.Set;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Booking {
+public class Booking extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "booking_time", updatable = false)
-    private LocalDateTime bookingTime;
 
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
@@ -45,8 +42,6 @@ public class Booking {
 
     @PrePersist
     public void onCreate() {
-        this.bookingTime = LocalDateTime.now();
-
         if (this.status == null) {
             this.status = Status.PENDING;
         }

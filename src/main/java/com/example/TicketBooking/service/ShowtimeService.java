@@ -5,6 +5,7 @@
     import com.example.TicketBooking.entity.Hall;
     import com.example.TicketBooking.entity.Movie;
     import com.example.TicketBooking.entity.Showtime;
+    import com.example.TicketBooking.exception.ResourceNotFoundException;
     import com.example.TicketBooking.mapper.ShowtimeMapper;
     import com.example.TicketBooking.repository.HallRepository;
     import com.example.TicketBooking.repository.MovieRepository;
@@ -56,10 +57,10 @@
         @Transactional
         public ShowtimeDTO create(ShowtimeCreateDTO showtimeCreateDTO) {
             Movie movie = movieRepository.findById(showtimeCreateDTO.getMovieId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
 
             Hall hall = hallRepository.findById(showtimeCreateDTO.getHallId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Hall not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Hall not found"));
 
             Showtime showtime = showtimeMapper.toEntity(showtimeCreateDTO);
             showtime.setHall(hall);
@@ -72,13 +73,13 @@
         @Transactional
         public ShowtimeDTO update(Long id, ShowtimeCreateDTO showtimeCreateDTO) {
             Movie movie = movieRepository.findById(showtimeCreateDTO.getMovieId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movie not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
 
             Hall hall = hallRepository.findById(showtimeCreateDTO.getHallId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Hall not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Hall not found"));
 
             Showtime showtime = showtimeRepository.findById(id)
-                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Showtime not found"));
+                            .orElseThrow(() -> new ResourceNotFoundException("Showtime not found"));
             showtime.setHall(hall);
             showtime.setMovie(movie);
             showtimeMapper.updateEntityFromDTO(showtimeCreateDTO, showtime);
@@ -90,7 +91,7 @@
         @Transactional
         public void delete(Long id) {
             Showtime showtime = showtimeRepository.findById(id)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Showtime not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Showtime not found"));
 
             showtimeRepository.deleteById(id);
         }

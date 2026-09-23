@@ -6,6 +6,7 @@ import com.example.TicketBooking.dto.ShowtimeCreateDTO;
 import com.example.TicketBooking.dto.ShowtimeDTO;
 import com.example.TicketBooking.entity.Showtime;
 import com.example.TicketBooking.service.ShowtimeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,14 +38,14 @@ public class ShowtimeController {
 
 
     @PostMapping("")
-    public ResponseEntity<ShowtimeDTO> createShowtime(@RequestBody ShowtimeCreateDTO showtimeCreateDTO) {
+    public ResponseEntity<ShowtimeDTO> createShowtime(@Valid @RequestBody ShowtimeCreateDTO showtimeCreateDTO) {
         ShowtimeDTO showtimeDTO = showtimeService.create(showtimeCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(showtimeDTO);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ShowtimeDTO> updateSeat(@PathVariable Long id
-            , @RequestBody ShowtimeCreateDTO seatCreateDTO) {
+            , @Valid @RequestBody ShowtimeCreateDTO seatCreateDTO) {
         ShowtimeDTO seatDTO = showtimeService.update(id, seatCreateDTO);
         return ResponseEntity.ok(seatDTO);
     }

@@ -2,6 +2,9 @@ package com.example.TicketBooking.service;
 
 import com.example.TicketBooking.dto.GenreDTO;
 import com.example.TicketBooking.entity.Genre;
+import com.example.TicketBooking.exception.DuplicateResourceException;
+import com.example.TicketBooking.exception.ResourceInUseException;
+import com.example.TicketBooking.exception.ResourceNotFoundException;
 import com.example.TicketBooking.mapper.GenreMapper;
 import com.example.TicketBooking.repository.GenreRepository;
 import com.example.TicketBooking.repository.MovieRepository;
@@ -30,7 +33,7 @@ public class GenreService {
     @Transactional
     public GenreDTO create(GenreDTO genreDTO) {
         if (genreRepository.existsByName(genreDTO.getName())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Genre name already exists");
+            throw new DuplicateResourceException("Genre name already exists");
         }
 
         Genre saved = genreRepository.save(genreMapper.toEntity(genreDTO));
@@ -40,7 +43,7 @@ public class GenreService {
     @Transactional
     public GenreDTO update(Long id, GenreDTO genreDTO) {
         Genre genre = genreRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Genre not found"));
+                () -> new ResourceNotFoundException("Genre not found"));
 
         genre.setName(genreDTO.getName());
         Genre saved = genreRepository.save(genre);
@@ -51,11 +54,11 @@ public class GenreService {
     @Transactional
     public void delete(Long id) {
         if (movieRepository.existsByGenres_Id(id)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Genre still used by some movies");
+            throw new ResourceInUseException("Genre still used by some movies");
         }
 
         Genre genre = genreRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Genre not found"));
+                () -> new ResourceNotFoundException("Genre not found"));
 
         genreRepository.deleteById(id);
     }

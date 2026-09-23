@@ -4,6 +4,8 @@ import com.example.TicketBooking.dto.HallCreateDTO;
 import com.example.TicketBooking.dto.HallDTO;
 import com.example.TicketBooking.entity.Cinema;
 import com.example.TicketBooking.entity.Hall;
+import com.example.TicketBooking.exception.ResourceInUseException;
+import com.example.TicketBooking.exception.ResourceNotFoundException;
 import com.example.TicketBooking.mapper.HallMapper;
 import com.example.TicketBooking.repository.CinemaRepository;
 import com.example.TicketBooking.repository.HallRepository;
@@ -36,7 +38,7 @@ public class HallService {
     @Transactional
     public HallDTO create(HallCreateDTO hallCreateDTO) {
         Cinema cinema = cinemaRepository.findById(hallCreateDTO.getCinemaId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cinema not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cinema not found"));
 
         Hall hall = hallMapper.toEntity(hallCreateDTO);
         hall.setCinema(cinema);
@@ -48,10 +50,10 @@ public class HallService {
     @Transactional
     public HallDTO update(Long id, HallCreateDTO hallCreateDTO) {
         Hall hall = hallRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Hall not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Hall not found"));
 
         Cinema cinema = cinemaRepository.findById(hallCreateDTO.getCinemaId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cinema not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cinema not found"));
 
         hallMapper.updateEntityFromDTO(hallCreateDTO, hall);
         hall.setCinema(cinema);
@@ -63,11 +65,11 @@ public class HallService {
     @Transactional
     public void delete(Long id) {
         if (showtimeRepository.existsByHall_Id(id)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Hall is still used by showtime");
+            throw new ResourceInUseException("Hall still used by showtime");
         }
 
         Hall hall = hallRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Hall not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Hall not found"));
 
         hallRepository.deleteById(id);
     }

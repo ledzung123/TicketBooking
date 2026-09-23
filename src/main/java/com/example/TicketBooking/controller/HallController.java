@@ -4,6 +4,7 @@ import com.example.TicketBooking.dto.HallCreateDTO;
 import com.example.TicketBooking.dto.HallDTO;
 import com.example.TicketBooking.entity.Hall;
 import com.example.TicketBooking.service.HallService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
@@ -26,14 +27,14 @@ public class HallController {
     }
 
     @PostMapping("")
-    public ResponseEntity<HallDTO> createHall(@RequestBody HallCreateDTO hallCreateDTO) {
+    public ResponseEntity<HallDTO> createHall(@Valid @RequestBody HallCreateDTO hallCreateDTO) {
         HallDTO hallDTO = hallService.create(hallCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(hallDTO);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<HallDTO> updateHall(@PathVariable Long id,
-                                              @RequestBody HallCreateDTO hallCreateDTO) {
+                                              @Valid @RequestBody HallCreateDTO hallCreateDTO) {
         HallDTO hallDTO = hallService.update(id, hallCreateDTO);
         return ResponseEntity.ok(hallDTO);
     }
