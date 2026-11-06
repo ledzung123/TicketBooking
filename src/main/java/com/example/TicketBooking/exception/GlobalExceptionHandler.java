@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -66,7 +68,7 @@ public class GlobalExceptionHandler {
             // Lay message
             String message = violation.getMessage();
 
-            // Phân tách lấy tên field gốc (vì propertyPath có thể chứa tên method, ta chỉ lấy phần cuối)
+            // Keep only the field name when the property path includes a method name.
             if (fieldName.contains(".")) {
                 fieldName = fieldName.substring(fieldName.lastIndexOf('.') + 1);
             }
@@ -101,6 +103,30 @@ public class GlobalExceptionHandler {
                 , "Data duplicate or violate database constraint");
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(problemDetail);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ProblemDetail> handleBadCredentials(BadCredentialsException ex) {
+        log.warn("Authentication failed: invalid credentials");
+
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED
+                , ex.getMessage());
+
+        problemDetail.setProperty("errorCode", "BAD_CREDENTIALS");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problemDetail);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ProblemDetail> handleAuthorizationDenied(AuthorizationDeniedException ex) {
+        log.warn("Authorization denied: {}", ex.getMessage());
+
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.FORBIDDEN,
+                "You can not access these material"
+        );
+        problemDetail.setProperty("errorCode", "FORBIDDEN");
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(problemDetail);
     }
 
     @ExceptionHandler(Exception.class)

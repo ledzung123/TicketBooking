@@ -8,16 +8,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-// 1. Chỉ định class nào sẽ chứa logic kiểm tra (TimeRangeValidator ở bước 2)
+// Validate the start and end times together at class level.
 @Target(ElementType.TYPE)
-// 2. Đặt annotation này ở đâu? Ở cấp độ CLASS (vì cần nhìn cả 2 field startTime và endTime)
 @Constraint(validatedBy = TimeRangeValidator.class)
-// 3. Chạy lúc Runtime (khi app đang chạy, Spring mới đọc được)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidTimeRange {
     String message() default "End time must be after start time";
 
-    // Code mau bat buoc
+    // Required by the Jakarta Validation annotation contract.
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

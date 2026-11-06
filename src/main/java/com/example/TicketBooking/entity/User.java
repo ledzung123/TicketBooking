@@ -39,7 +39,8 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private Set<Booking> bookings;
 
-
+    @OneToMany(mappedBy = "user")
+    private Set<RefreshToken> refreshTokens;
 
     @PrePersist
     public void onCreate() {
