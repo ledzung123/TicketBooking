@@ -1,1 +1,0 @@
--- baseline, schema đã tồn tại từ trước

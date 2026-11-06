@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -38,7 +39,7 @@ public class Booking extends BaseEntity {
     private Showtime showtime;
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<BookingSeat> bookingSeats = new HashSet<>();
+    private List<BookingSeat> bookingSeats;
 
     @PrePersist
     public void onCreate() {
